@@ -63,8 +63,9 @@ if len(sys.argv)<=1:
 
 ref = pysam.FastxFile(sys.argv[1]).__next__()
 ref_seq = ref.sequence
-print("Loaded %s length %d"%(ref.name,len(ref_seq)))
+print("Loaded %s length %d"%(ref.name,len(ref_seq)),file=sys.stderr)
 
 print("\t".join(str(x) for x in ("file","match","mismatch","insert","delete")))
 for f in sys.argv[2:]:
+    print("Processing %s"%f,file=sys.stderr)
     process_bam(f)

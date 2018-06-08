@@ -11,23 +11,22 @@
 
 #define CONTIGLEN 1000000
 // 5, to cover 4 bases + N
-#define NBASES 5
+#define NBASES 7
 int depth[CONTIGLEN][NBASES];
 int max_loc = 0;
 
-char dnaChar[] = "ATGCN";
+char dnaChar[] = "ATGCNID";
+
 int char2int(char c) {
-  switch(c) {
-  case 'A': return 0;
-  case 'T': return 1;
-  case 'G': return 2;
-  case 'C': return 3;
-  case 'N': return 4;
+  for(int i = 0; i<NBASES; i++) {
+    if(c == dnaChar[i]) {
+      return i;
+    }
   }
   exit(-1);
 }
 
-int main() 
+int main()
 {
   int lineLen=1024;
   char buf[lineLen];
@@ -60,12 +59,19 @@ int main()
       char c=*(cigar++);
       switch(c) {
       case 'S':
-      case 'I': 
           while((n--)>0) seq++;
           break;
-      case 'D': 
-      case 'N': 
-          while((n--)>0) loc++;
+      case 'I':
+          // count per inserted location
+          depth[loc][char2int('I')]++;
+          while((n--)>0) seq++;
+          break;
+      case 'D':
+      case 'N':
+          while((n--)>0) {
+            depth[loc][char2int('D')]++;
+            loc++;
+          }
           break;
       case 'M':
           while ((n--)>0) {
